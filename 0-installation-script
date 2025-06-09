@@ -1,0 +1,44 @@
+==============================
+How to Install SASS (Step-by-Step)
+==============================
+
+Step 1: Install Node.js
+------------------------
+1. Go to https://nodejs.org
+2. Download the latest LTS version for your operating system (Windows, macOS, or Linux).
+3. Run the installer and follow the prompts.
+4. After installation, open a terminal (Command Prompt, Terminal, or Bash).
+5. Verify Node.js is installed by running:
+   node -v
+   npm -v
+
+Step 2: Install SASS Globally
+-----------------------------
+1. In the terminal, run the following command to install SASS globally:
+   npm install -g sass
+
+Step 3: Verify SASS Installation
+-------------------------------
+1. After installation completes, check the SASS version to verify it was installed correctly:
+   sass --version
+
+   Example output:
+   1.63.6 compiled with dart2js 3.2.0
+
+Step 4 (Optional): Install SASS Locally in a Project
+----------------------------------------------------
+1. Navigate to your project directory:
+   cd path/to/your/project
+
+2. Initialize npm if you haven't already:
+   npm init -y
+
+3. Install SASS as a development dependency:
+   npm install --save-dev sass
+
+4. Use SASS locally with:
+   npx sass input.scss output.css
+
+==============================
+SASS is now installed!
+==============================
