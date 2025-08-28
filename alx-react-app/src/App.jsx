@@ -5,6 +5,7 @@ import UserProfile from './components/UserProfile';
 
 function App() {
   return (
+    "<WelcomeMessage />"
     <div>
       <Header />
       <MainContent />
