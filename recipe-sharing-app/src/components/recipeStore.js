@@ -23,6 +23,9 @@ const useRecipeStore = create((set, get) => ({
       recipes: state.recipes.filter((recipe) => recipe.id !== id),
     })),
 
+  // ✅ Needed for tests
+  setRecipes: (recipes) => set({ recipes }),
+
   // -----------------
   // Search & Filtering
   // -----------------
