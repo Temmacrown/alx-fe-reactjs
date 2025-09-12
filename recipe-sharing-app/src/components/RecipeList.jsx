@@ -14,7 +14,6 @@ const RecipeList = () => {
       ) : (
         recipes.map((recipe) => (
           <div key={recipe.id} style={{ marginBottom: "15px" }}>
-            {/* ✅ Use Link so test sees it */}
             <h3>
               <Link to={`/recipe/${recipe.id}`}>{recipe.title}</Link>
             </h3>
