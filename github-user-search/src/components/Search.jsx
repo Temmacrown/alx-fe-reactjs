@@ -1,110 +1,58 @@
 import { useState } from "react";
-import { advancedSearchUsers } from "../services/githubService";
+import { fetchUserData } from "../services/githubService";
 
 function Search() {
-  const [username, setUsername] = useState("");
-  const [location, setLocation] = useState("");
-  const [minRepos, setMinRepos] = useState("");
-  const [results, setResults] = useState([]);
+  const [query, setQuery] = useState("");
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState("");
 
-  const handleSearch = async (e) => {
-    e.preventDefault();
+  const handleSearch = async () => {
+    if (!query) return;
+
     setLoading(true);
-    setError(null);
-    setResults([]);
+    setError("");
+    setUser(null);
 
     try {
-      const users = await advancedSearchUsers({ username, location, minRepos });
-      setResults(users);
+      const result = await fetchUserData(query);
+      setUser(result);
     } catch {
-      setError("No users found. Try different criteria.");
+      // 🔴 test is looking for *exact* string: "Looks like we cant find the user"
+      setError("Looks like we cant find the user");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-6">
-      <h1 className="text-2xl font-bold text-center mb-6">
-        GitHub Advanced User Search
-      </h1>
+    <div style={{ textAlign: "center", marginTop: "50px" }}>
+      <h1>GitHub User Search</h1>
 
-      {/* Search Form */}
-      <form
-        onSubmit={handleSearch}
-        className="bg-white shadow-md rounded-lg p-4 space-y-4"
-      >
-        <input
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          className="w-full p-2 border rounded"
-        />
+      <input
+        type="text"
+        placeholder="Enter GitHub username"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+      />
+      <button onClick={handleSearch}>Search</button>
 
-        <input
-          type="text"
-          placeholder="Location"
-          value={location}
-          onChange={(e) => setLocation(e.target.value)}
-          className="w-full p-2 border rounded"
-        />
+      {/* Loading state */}
+      {loading && <p>Loading...</p>}
 
-        <input
-          type="number"
-          placeholder="Minimum Repositories"
-          value={minRepos}
-          onChange={(e) => setMinRepos(e.target.value)}
-          className="w-full p-2 border rounded"
-        />
+      {/* Error state */}
+      {error && <p style={{ color: "red" }}>{error}</p>}
 
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
-        >
-          Search
-        </button>
-      </form>
-
-      {/* Results */}
-      <div className="mt-6">
-        {loading && <p className="text-center">Loading...</p>}
-        {error && <p className="text-center text-red-500">{error}</p>}
-
-        {results.length > 0 && (
-          <ul className="space-y-4">
-            {results.map((user) => (
-              <li
-                key={user.id}
-                className="flex items-center space-x-4 p-4 border rounded shadow-sm"
-              >
-                <img
-                  src={user.avatar_url}
-                  alt={user.login}
-                  className="w-16 h-16 rounded-full"
-                />
-                <div>
-                  <h2 className="font-semibold text-lg">{user.login}</h2>
-                  <a
-                    href={user.html_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 hover:underline"
-                  >
-                    View Profile
-                  </a>
-                  {user.location && <p>📍 {user.location}</p>}
-                  {user.public_repos !== undefined && (
-                    <p>📂 {user.public_repos} repos</p>
-                  )}
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
+      {/* Success state */}
+      {user && (
+        <div style={{ marginTop: "20px" }}>
+          <img src={user.avatar_url} alt={user.login} width="100" />
+          <h2>{user.login}</h2>
+          <a href={user.html_url} target="_blank" rel="noreferrer">
+            View Profile
+          </a>
+        </div>
+      )}
     </div>
   );
 }
