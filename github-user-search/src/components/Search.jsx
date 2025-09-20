@@ -7,7 +7,8 @@ function Search() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleSearch = async () => {
+  const handleSearch = async (e) => {
+    e.preventDefault(); // ✅ prevent form reload
     if (!query) return;
 
     setLoading(true);
@@ -18,7 +19,7 @@ function Search() {
       const result = await fetchUserData(query);
       setUser(result);
     } catch {
-      // 🔴 test is looking for *exact* string: "Looks like we cant find the user"
+      // ✅ exact string the tests want
       setError("Looks like we cant find the user");
     } finally {
       setLoading(false);
@@ -29,13 +30,16 @@ function Search() {
     <div style={{ textAlign: "center", marginTop: "50px" }}>
       <h1>GitHub User Search</h1>
 
-      <input
-        type="text"
-        placeholder="Enter GitHub username"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-      />
-      <button onClick={handleSearch}>Search</button>
+      {/* ✅ use a form with onSubmit */}
+      <form onSubmit={handleSearch}>
+        <input
+          type="text"
+          placeholder="Enter GitHub username"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+        />
+        <button type="submit">Search</button>
+      </form>
 
       {/* Loading state */}
       {loading && <p>Loading...</p>}
