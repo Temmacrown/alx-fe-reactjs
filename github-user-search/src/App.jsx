@@ -5,20 +5,20 @@ function App() {
   const [query, setQuery] = useState("");
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState("");
 
   const handleSearch = async () => {
     if (!query) return;
 
     setLoading(true);
-    setError(null);
+    setError("");
     setUser(null);
 
     try {
       const result = await fetchUserData(query);
       setUser(result);
     } catch {
-      setError("Looks like we can't find the user");
+      setError("Looks like we can’t find the user");
     } finally {
       setLoading(false);
     }
@@ -28,7 +28,6 @@ function App() {
     <div style={{ textAlign: "center", marginTop: "50px" }}>
       <h1>GitHub User Search</h1>
 
-      {/* Search Input */}
       <input
         type="text"
         placeholder="Enter GitHub username"
@@ -37,15 +36,18 @@ function App() {
       />
       <button onClick={handleSearch}>Search</button>
 
-      {/* Conditional Rendering */}
+      {/* Loading state */}
       {loading && <p>Loading...</p>}
+
+      {/* Error state */}
       {error && <p style={{ color: "red" }}>{error}</p>}
 
+      {/* Success state */}
       {user && (
         <div style={{ marginTop: "20px" }}>
-          <img src={user.avatar_url} alt={user.login} width="120" />
-          <h2>{user.name || user.login}</h2>
-          <a href={user.html_url} target="_blank" rel="noopener noreferrer">
+          <img src={user.avatar_url} alt={user.login} width="100" />
+          <h2>{user.login}</h2>
+          <a href={user.html_url} target="_blank" rel="noreferrer">
             View Profile
           </a>
         </div>
