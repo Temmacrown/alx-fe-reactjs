@@ -1,28 +1,30 @@
 import axios from "axios";
 
-const SEARCH_URL = "https://api.github.com/search/users";
+const BASE_URL = "https://api.github.com";
 
 /**
- * Fetch GitHub users with advanced search parameters
- * @param {string} username - GitHub username
- * @param {string} location - User location
- * @param {number} minRepos - Minimum repo count
- * @returns {Promise<Object>} Search results
+ * Fetch users from GitHub Search API with advanced filters
+ * @param {Object} params - Search parameters
+ * @param {string} params.username - GitHub username query
+ * @param {string} params.location - User location filter
+ * @param {number} params.minRepos - Minimum number of repositories
  */
-export const fetchUserData = async (username, location = "", minRepos = 0) => {
+export const fetchUserData = async ({ username, location, minRepos }) => {
   try {
-    let query = username ? `${username} in:login` : "";
-    if (location) query += ` location:${location}`;
-    if (minRepos > 0) query += ` repos:>=${minRepos}`;
+    // Construct search query
+    let query = "";
 
-    const response = await axios.get(`${SEARCH_URL}?q=${query}`, {
-      headers: {
-        Authorization: `token ${import.meta.env.VITE_APP_GITHUB_API_KEY || ""}`,
-      },
-    });
+    if (username) query += `${username} `;
+    if (location) query += `location:${location} `;
+    if (minRepos) query += `repos:>=${minRepos} `;
 
-    return response.data.items;
+    // Trim to clean query string
+    query = query.trim();
+
+    const response = await axios.get(`${BASE_URL}/search/users?q=${encodeURIComponent(query)}`);
+    return response.data.items; // GitHub returns results inside 'items'
   } catch (error) {
-    throw new Error("Search failed");
+    console.error("Error fetching user data:", error);
+    throw error;
   }
 };
