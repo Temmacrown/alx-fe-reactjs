@@ -1,21 +1,28 @@
 import axios from "axios";
 
-const BASE_URL = "https://api.github.com/users/";
+const SEARCH_URL = "https://api.github.com/search/users";
 
 /**
- * Fetch a single user's data from GitHub
- * @param {string} username - The GitHub username
- * @returns {Promise<Object>} User data
+ * Fetch GitHub users with advanced search parameters
+ * @param {string} username - GitHub username
+ * @param {string} location - User location
+ * @param {number} minRepos - Minimum repo count
+ * @returns {Promise<Object>} Search results
  */
-export const fetchUserData = async (username) => {
+export const fetchUserData = async (username, location = "", minRepos = 0) => {
   try {
-    const response = await axios.get(`${BASE_URL}${username}`, {
+    let query = username ? `${username} in:login` : "";
+    if (location) query += ` location:${location}`;
+    if (minRepos > 0) query += ` repos:>=${minRepos}`;
+
+    const response = await axios.get(`${SEARCH_URL}?q=${query}`, {
       headers: {
         Authorization: `token ${import.meta.env.VITE_APP_GITHUB_API_KEY || ""}`,
       },
     });
-    return response.data;
+
+    return response.data.items;
   } catch (error) {
-    throw new Error("User not found");
+    throw new Error("Search failed");
   }
 };
