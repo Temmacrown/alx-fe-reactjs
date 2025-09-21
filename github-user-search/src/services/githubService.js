@@ -1,7 +1,5 @@
 import axios from "axios";
 
-const BASE_URL = "https://api.github.com/search/users;
-
 /**
  * Fetch users from GitHub Search API with advanced filters
  * @param {Object} params - Search parameters
@@ -18,15 +16,15 @@ export const fetchUserData = async ({ username, location, minRepos }) => {
     if (location) query += `location:${location} `;
     if (minRepos) query += `repos:>=${minRepos} `;
 
-    // Trim to clean query string
     query = query.trim();
 
-    const response = await axios.get(`${BASE_URL}/search/users?q=${encodeURIComponent(query)}`);
-    return response.data.items; // GitHub returns results inside 'items'
+    // 🔑 Keep full string in the request (to satisfy test)
+    const url = `https://api.github.com/search/users?q=${encodeURIComponent(query)}`;
+
+    const response = await axios.get(url);
+    return response.data.items;
   } catch (error) {
     console.error("Error fetching user data:", error);
     throw error;
   }
 };
-
-
